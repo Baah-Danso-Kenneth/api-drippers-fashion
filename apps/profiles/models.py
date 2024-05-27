@@ -23,7 +23,8 @@ class Profile(TimeStampedModel):
         verbose_name=_("About me"), default="Say something about your self"
     )
     profile_photo = models.ImageField(
-        verbose_name=_("Profile Photo")
+        verbose_name=_("Profile Photo"),
+        default="/profile_photo.png"
     )
 
     category = models.CharField(
