@@ -2,13 +2,19 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import Profile
-from .serializers import ProfileSerializer, UpdateProfileSerializer
-from .renderers import ProfileJSONRenderer
+from .models import Category, Profile
+from .serializers import CategorySerializer, ProfileSerializer, UpdateProfileSerializer
 from .exceptions import ProfileNotFound, NotYourProfile
+
+
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
 
 class ProfileViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ProfileSerializer
 
     def retrieve(self, request, pk=None):
         user = request.user
@@ -16,7 +22,7 @@ class ProfileViewSet(viewsets.ViewSet):
             user_profile = Profile.objects.get(user=user)
         except Profile.DoesNotExist:
             raise ProfileNotFound
-        
+
         serializer = ProfileSerializer(user_profile, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -27,7 +33,7 @@ class ProfileViewSet(viewsets.ViewSet):
             user_profile = Profile.objects.get(user=user)
         except Profile.DoesNotExist:
             raise ProfileNotFound
-        
+
         data = request.data
         serializer = UpdateProfileSerializer(
             instance=user_profile, data=data, partial=True
@@ -37,11 +43,11 @@ class ProfileViewSet(viewsets.ViewSet):
         serializer.save()
 
         category = serializer.data.get('category').lower()
-        if category == 'Male':
+        if category == 'male':
             redirect_url = '/men-page'
-        elif category == 'Female':
+        elif category == 'female':
             redirect_url = '/women-page'
-        elif category == 'Kids':
+        elif category == 'kids':
             redirect_url = '/kids-page'
         else:
             redirect_url = '/other-page'

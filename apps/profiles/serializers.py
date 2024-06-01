@@ -1,7 +1,13 @@
 from django_countries.serializer_fields import CountryField
 from rest_framework import serializers
 
-from .models import Profile
+from .models import Category, Profile
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'image']
 
 class ProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username")
@@ -10,6 +16,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email")
     full_name = serializers.CharField(source="user.get_full_name")
     country = CountryField(name_only=True)
+    category = CategorySerializer()
 
     class Meta:
         model = Profile
@@ -50,4 +57,3 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         ]
     
     
-

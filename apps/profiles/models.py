@@ -7,12 +7,12 @@ from apps.sharedApps import TimeStampedModel
 
 User = get_user_model()
 
-class Category(models.TextChoices):
-    MALE = "Male", _("Male")
-    FEMALE = "Female", _("Female")
-    KIDS = "Kids", _("Kids")
-    OTHER = "Other", _("Other")
+class Category(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    image = models.ImageField(upload_to="category_images/")
 
+    def __str__(self):
+        return self.name
 
 class Profile(TimeStampedModel):
     user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
@@ -27,10 +27,12 @@ class Profile(TimeStampedModel):
         default="/profile_photo.png"
     )
 
-    category = models.CharField(
+    category = models.ForeignKey(
+        Category,
         verbose_name=_("Category"),
-        choices=Category.choices,
-        max_length=6,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
     )
     country = CountryField(
         verbose_name=_("Country"),
