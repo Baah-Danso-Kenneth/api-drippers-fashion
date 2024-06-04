@@ -1,6 +1,8 @@
 from django_countries.serializer_fields import CountryField
 from rest_framework import serializers
 
+from apps.fashionStyles.models import Styles
+
 from .models import Category, Profile
 
 
@@ -8,6 +10,18 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name', 'image']
+
+    def validate_name(self, value):
+        return value.lower()
+
+class StyleSerializer(serializers.ModelSerializer):
+    category =CategorySerializer(read_only=True)
+    category_id = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(), source='category', write_only=True
+    )
+    class Meta:
+        model = Styles
+        fields = ['title', 'category', 'category_id']
 
 class ProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username")

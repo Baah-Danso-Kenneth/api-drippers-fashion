@@ -12,6 +12,9 @@ class Styles(models.Model):
     title = models.CharField(max_length=100)
     style_image = models.ImageField(upload_to='style_images/')
 
+    def __str__(self):
+        return f"Style type is {self.title} and category {self.category}"
+
 
 class FashionInspo(TimeStampedModel):
     title = models.CharField(max_length=200)
