@@ -23,19 +23,17 @@ class FashionInspo(TimeStampedModel):
     images = models.ManyToManyField('FashionInspoImage')
     tags = models.CharField(max_length=200, blank=True)
     source_link = models.URLField(blank=True, null=True)
-
-    @property
-    def likes(self):
-        return f"{self.likes.count()}"
+                                  
+    def likes_count(self):
+        return self.likes.count()
     
-    @property
     def average_rating(self):
         ratings = self.ratings.all()
-        if ratings.exist():
+        if ratings.exists():
             return ratings.aggregate(models.Avg('value'))['value__avg']
         return 0
-    
 
+    
 class FashionInspoImage(models.Model):
     front_image = models.ImageField(upload_to="fashion_inspo_images/", default="fashion_inspo_images/default_front.png")
     back_image = models.ImageField(upload_to="fashion_inspo_images/", default="fashion_inspo_images/default_back.png")
@@ -66,4 +64,7 @@ class Like(UserFashionInspoInteraction):
 class Rating(UserFashionInspoInteraction):
     ratings = models.ForeignKey(FashionInspo, on_delete=models.CASCADE, related_name='ratings')
     value = models.PositiveSmallIntegerField()
+
+    def __str__(self):
+        return f"{self.ratings} has being rated {self.value}"
 
