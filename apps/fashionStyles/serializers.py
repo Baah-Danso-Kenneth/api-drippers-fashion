@@ -1,6 +1,7 @@
-from rest_framework import serializers
+from apps.profiles.serializers import CategorySerializer
 from .models import FashionInspo, FashionInspoImage, Styles, Category, Comment
 
+from rest_framework import serializers
 
 class FashionInspoImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -8,6 +9,7 @@ class FashionInspoImageSerializer(serializers.ModelSerializer):
         fields = ['id', 'front_image', 'back_image', 'caption']
 
 class StylesSerializer(serializers.ModelSerializer):
+    category = CategorySerializer()
     class Meta:
         model = Styles
         fields = ['id', 'title', 'category', 'style_image']
@@ -15,10 +17,10 @@ class StylesSerializer(serializers.ModelSerializer):
 
 class FashionInspoSerializer(serializers.ModelSerializer):
     images = FashionInspoImageSerializer(many=True, read_only=True)
-    styles = StylesSerializer(read_only=True)
-    likes_count = serializers.ReadOnlyField(source='likes_count')
-    average_rating = serializers.ReadOnlyField(source='average_rating')
+    styles = StylesSerializer()
+    likes_count = serializers.ReadOnlyField()
+    average_rating = serializers.ReadOnlyField()
 
     class Meta:
         model = FashionInspo
-        fields = ['id', 'title', 'description', 'styles', 'images', 'tags', 'source', 'likes_count', 'average_rating']
+        fields = ['id', 'title', 'description', 'styles', 'images', 'tags', 'likes_count', 'average_rating']

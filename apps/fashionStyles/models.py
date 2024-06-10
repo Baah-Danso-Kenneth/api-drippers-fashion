@@ -23,10 +23,12 @@ class FashionInspo(TimeStampedModel):
     images = models.ManyToManyField('FashionInspoImage')
     tags = models.CharField(max_length=200, blank=True)
     source_link = models.URLField(blank=True, null=True)
-                                  
+
+    @property                             
     def likes_count(self):
         return self.likes.count()
     
+    @property
     def average_rating(self):
         ratings = self.ratings.all()
         if ratings.exists():
